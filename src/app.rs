@@ -2,16 +2,12 @@ use iced::{
   widget::{button, column, container, row, scrollable, Rule},
   Length, Sandbox,
 };
+use maiq_shared::Group;
 
-use crate::components::{
-  group::{Group, GroupMessage},
-  lesson::{Lesson, LessonMessage},
-  Component,
-};
+use crate::components::{group::GroupMessage, Component};
 
 #[derive(Debug, Clone)]
 pub enum AppMessage {
-  Lesson((usize, LessonMessage)),
   Group((usize, GroupMessage)),
   NewGroup,
   Export,
@@ -38,16 +34,7 @@ impl Sandbox for App {
   type Message = AppMessage;
 
   fn new() -> Self {
-    let lessons = vec![Lesson {
-      num: Some(1),
-      subgroup: None,
-      name: "Пример".into(),
-      teacher: "Какой-то чел".into(),
-      classroom: "204У".into(),
-    }];
-
-    let groups = vec![Group { name: "Ир3-21".into(), lessons }];
-    App { groups }
+    App::default()
   }
 
   fn title(&self) -> String {
@@ -56,7 +43,6 @@ impl Sandbox for App {
 
   fn update(&mut self, message: Self::Message) {
     match message {
-      AppMessage::Lesson(_) => todo!(),
       AppMessage::Group((idx, GroupMessage::Remove)) => self.remove_group(idx),
       AppMessage::Group((idx, msg)) => self.update_group(msg, idx),
       AppMessage::NewGroup => self.groups.push(Group::default()),
@@ -80,7 +66,7 @@ impl Sandbox for App {
       .padding(15),
     );
 
-    let content = column![toolbar, Rule::horizontal(1), container(groups).width(Length::Fill).width(Length::Fill)];
+    let content = column![toolbar, Rule::horizontal(1), container(groups).width(Length::Fill).padding([15, 0, 0, 0])];
 
     container(content).padding(15).into()
   }

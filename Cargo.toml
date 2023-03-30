@@ -6,4 +6,6 @@ edition = "2021"
 [dependencies]
 iced = { version = "0.8.0", features = ["tokio"] }
 include_dir = "0.7.3"
+maiq-shared = { git = "https://github.com/pashokitsme/maiq-parser", branch = "optionable-lesson-num", version = "0.3.0" }
+serde = { version = "1.0.159", features = ["serde_derive"] }
 tokio = { version = "1.27.0", features = ["rt-multi-thread", "macros"] }

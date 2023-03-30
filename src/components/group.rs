@@ -1,12 +1,13 @@
-use super::lesson::{Lesson, LessonMessage};
+use super::lesson::{LessonMessage, LessonComponent};
 use super::Component;
 use iced::widget::{button, row, text_input};
-use iced::widget::{column, container, rule::Rule, text};
-use iced::{ContentFit, Element, Length};
+use iced::widget::{column, container, rule::Rule};
+use iced::{Element, Length};
+use maiq_shared::{Group, Lesson};
 
-pub struct Group {
-  pub name: String,
-  pub lessons: Vec<Lesson>,
+pub trait GroupComponent {
+  fn update_lesson(&mut self, idx: usize, message: LessonMessage);
+  fn remove_lesson(&mut self, idx: usize);
 }
 
 #[derive(Debug, Clone)]
@@ -17,7 +18,7 @@ pub enum GroupMessage {
   Remove,
 }
 
-impl Group {
+impl GroupComponent for Group {
   fn update_lesson(&mut self, idx: usize, message: LessonMessage) {
     if let Some(l) = self.lessons.get_mut(idx) {
       l.update(message)
@@ -26,12 +27,6 @@ impl Group {
 
   fn remove_lesson(&mut self, idx: usize) {
     self.lessons.remove(idx);
-  }
-}
-
-impl Default for Group {
-  fn default() -> Self {
-    Self { name: "Группа?".into(), lessons: Default::default() }
   }
 }
 
@@ -52,7 +47,7 @@ impl Component for Group {
     let name_field = text_input("Группа", &self.name.to_string(), GroupMessage::EditName).width(Length::Fixed(80.));
     let header = row![name_field, button("+").on_press(GroupMessage::CreateLesson), button("R").on_press(GroupMessage::Remove)]
       .spacing(20)
-      .padding([30, 10, 10, 15]);
+      .padding([0, 10, 10, 15]);
 
     let lessons = column(
       self
