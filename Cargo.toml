@@ -1,0 +1,9 @@
+[package]
+name = "maiq-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+iced = { version = "0.8.0", features = ["tokio"] }
+include_dir = "0.7.3"
+tokio = { version = "1.27.0", features = ["rt-multi-thread", "macros"] }
