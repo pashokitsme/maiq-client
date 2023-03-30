@@ -25,7 +25,9 @@ pub enum LessonMessage {
 
 impl LessonComponent for Lesson {
   fn new(prev: Option<&Lesson>) -> Self {
-    let num = prev.map(|l| l.num.map(|n| n + 1)).unwrap_or_default();
+    let num = prev
+      .map(|l| l.num.filter(|n| *n < 9).map(|n| n + 1))
+      .unwrap_or_default();
     Self { num, ..Lesson::default() }
   }
 

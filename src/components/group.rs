@@ -1,9 +1,9 @@
-use super::lesson::{LessonMessage, LessonComponent};
+use super::lesson::{LessonComponent, LessonMessage};
 use super::Component;
-use iced::widget::{button, row, text_input};
+use iced::widget::{button, row, text, text_input};
 use iced::widget::{column, container, rule::Rule};
 use iced::{Element, Length};
-use maiq_shared::{Group, Lesson};
+use maiq_shared::{Group, Lesson, Uid};
 
 pub trait GroupComponent {
   fn update_lesson(&mut self, idx: usize, message: LessonMessage);
@@ -34,6 +34,7 @@ impl Component for Group {
   type Message = GroupMessage;
 
   fn update(&mut self, message: GroupMessage) {
+    self.uid = self.uid();
     match message {
       GroupMessage::EditName(name) => self.name = name,
       GroupMessage::CreateLesson => self.lessons.push(Lesson::new(self.lessons.last())),
@@ -45,9 +46,15 @@ impl Component for Group {
 
   fn view(&self) -> Element<Self::Message> {
     let name_field = text_input("Группа", &self.name.to_string(), GroupMessage::EditName).width(Length::Fixed(80.));
-    let header = row![name_field, button("+").on_press(GroupMessage::CreateLesson), button("R").on_press(GroupMessage::Remove)]
-      .spacing(20)
-      .padding([0, 10, 10, 15]);
+    let header = row![
+      name_field,
+      button("+").on_press(GroupMessage::CreateLesson),
+      button("R").on_press(GroupMessage::Remove),
+      text(format!("UUID: {}", self.uid))
+    ]
+    .align_items(iced::Alignment::Center)
+    .spacing(20)
+    .padding([0, 10, 10, 15]);
 
     let lessons = column(
       self
