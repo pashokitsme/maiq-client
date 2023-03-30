@@ -1,0 +1,3 @@
+[submodule "assets/default"]
+	path = assets/default
+	url = https://github.com/pashokitsme/maiq-defaults

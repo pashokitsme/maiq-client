@@ -10,6 +10,7 @@ use crate::components::{group::GroupMessage, Component};
 pub enum AppMessage {
   Group((usize, GroupMessage)),
   NewGroup,
+  Sort,
   Export,
 }
 
@@ -46,14 +47,19 @@ impl Sandbox for App {
       AppMessage::Group((idx, GroupMessage::Remove)) => self.remove_group(idx),
       AppMessage::Group((idx, msg)) => self.update_group(msg, idx),
       AppMessage::NewGroup => self.groups.push(Group::default()),
+      AppMessage::Sort => todo!(),
       AppMessage::Export => todo!(),
     };
   }
 
   fn view(&self) -> iced::Element<'_, Self::Message> {
-    let toolbar = row![button("Добавить группу").on_press(AppMessage::NewGroup), button("Экспорт").on_press(AppMessage::Export)]
-      .padding([0, 0, 5, 0])
-      .spacing(15);
+    let toolbar = row![
+      button("Добавить группу").on_press(AppMessage::NewGroup),
+      button("Отсортировать").on_press(AppMessage::Sort),
+      button("Экспорт").on_press(AppMessage::Export)
+    ]
+    .padding([0, 0, 5, 0])
+    .spacing(15);
     let groups = scrollable(
       column(
         self
