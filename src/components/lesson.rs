@@ -1,4 +1,5 @@
 use iced::{
+  theme::Button,
   widget::{button, row, text, text_input},
   Element, Length,
 };
@@ -83,8 +84,8 @@ impl Component for Lesson {
         .width(Length::FillPortion(3)),
       text_input("Ауд.", if let Some(classroom) = &self.classroom { classroom } else { "" }, LessonMessage::EditClassroom)
         .width(Length::FillPortion(1)),
-      button("D").on_press(LessonMessage::Default),
-      button("R").on_press(LessonMessage::Remove)
+      button("D").on_press(LessonMessage::Default).style(Button::Secondary),
+      button("R").on_press(LessonMessage::Remove).style(Button::Destructive)
     ]
     .align_items(iced::Alignment::Center)
     .padding([0, 0, 0, 15])

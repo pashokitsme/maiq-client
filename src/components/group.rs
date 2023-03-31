@@ -1,5 +1,6 @@
 use super::lesson::{LessonComponent, LessonMessage};
 use super::Component;
+use iced::theme::Button;
 use iced::widget::{button, row, text, text_input};
 use iced::widget::{column, container, rule::Rule};
 use iced::{Element, Length};
@@ -21,7 +22,7 @@ pub enum GroupMessage {
 impl GroupComponent for Group {
   fn update_lesson(&mut self, idx: usize, message: LessonMessage) {
     if let Some(l) = self.lessons.get_mut(idx) {
-      l.update(message)
+      l.update(message);
     }
   }
 
@@ -49,7 +50,7 @@ impl Component for Group {
     let header = row![
       name_field,
       button("+").on_press(GroupMessage::CreateLesson),
-      button("R").on_press(GroupMessage::Remove),
+      button("R").on_press(GroupMessage::Remove).style(Button::Destructive),
       text(format!("UUID: {}", self.uid))
     ]
     .align_items(iced::Alignment::Center)

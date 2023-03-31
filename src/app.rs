@@ -5,10 +5,14 @@ use std::{
 };
 
 use iced::{
+  theme::Button,
   widget::{button, column, container, row, scrollable, text, text_input, Rule},
   Length, Sandbox,
 };
-use maiq_shared::{utils::time::now, Group, Snapshot, Uid};
+use maiq_shared::{
+  utils::time::{now, now_date_offset},
+  Group, Snapshot, Uid,
+};
 
 use crate::components::{group::GroupMessage, Component};
 
@@ -71,7 +75,9 @@ impl Sandbox for App {
 
   fn new() -> Self {
     let mut app = App::default();
+    app.snapshot.date = now_date_offset(1);
     app.snapshot.uid = app.snapshot.uid();
+    app.state.date_buf = app.snapshot.date.format("%d.%m.%Y").to_string();
     app
   }
 
@@ -96,17 +102,24 @@ impl Sandbox for App {
 
   fn view(&self) -> iced::Element<'_, Self::Message> {
     let toolbar = row![
-      button("Добавить группу").on_press(AppMessage::NewGroup),
-      button("Отсортировать").on_press(AppMessage::Sort),
-      button("Экспорт").on_press(AppMessage::Export),
-      button("Загрузить стандартное расписание").on_press(AppMessage::LoadDefault),
+      button("Добавить группу")
+        .on_press(AppMessage::NewGroup)
+        .style(Button::Secondary),
+      button("Отсортировать")
+        .on_press(AppMessage::Sort)
+        .style(Button::Secondary),
+      button("Экспорт")
+        .on_press(AppMessage::Export)
+        .style(Button::Secondary),
+      button("Загрузить стандартное расписание")
+        .on_press(AppMessage::LoadDefault)
+        .style(Button::Secondary),
     ]
     .padding([0, 0, 5, 0])
     .spacing(15);
-    let info =
-      row![text(format!("UUID {}", self.snapshot.uid)), button("Редактировать дату").on_press(AppMessage::ToggleDateEdit)]
-        .align_items(iced::Alignment::Center)
-        .spacing(25);
+    let info = row![text(format!("UUID {}", self.snapshot.uid)),]
+      .align_items(iced::Alignment::Center)
+      .spacing(25);
 
     let info = if self.state.is_date_editing {
       info.push(
@@ -115,7 +128,11 @@ impl Sandbox for App {
           .on_submit(AppMessage::ApplySnapshotDate),
       )
     } else {
-      info.push(text(&self.snapshot.date.format("%d.%m.%Y").to_string()))
+      info.push(
+        button(text(self.snapshot.date.format("%d.%m.%Y").to_string()))
+          .on_press(AppMessage::ToggleDateEdit)
+          .style(Button::Text),
+      )
     };
 
     let groups = scrollable(
