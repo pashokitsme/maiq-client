@@ -1,12 +1,12 @@
 use anyhow::anyhow;
 use iced::{
-  widget::{column, container, scrollable, Rule},
+  widget::{column, container, row, scrollable, Rule},
   Length, Sandbox,
 };
 
 use crate::{
   env::DEFAULTS,
-  view::{editor::SnapshotEditor, toolbar::toolbar, Component, EditorMessage},
+  view::{editor::SnapshotEditor, notification::Notification, toolbar::toolbar, Component, EditorMessage},
 };
 
 #[derive(Debug, Clone)]
@@ -16,12 +16,14 @@ pub enum AppMessage {
   Import(usize),
   Export,
   New,
+  DeleteNotification(usize),
   Dummy,
 }
 
 #[derive(Default)]
 pub struct App {
   editor: SnapshotEditor,
+  notifications: Vec<Notification>,
 }
 
 impl Sandbox for App {
@@ -48,6 +50,10 @@ impl Sandbox for App {
       }
       AppMessage::Sort => todo!(),
       AppMessage::Export => self.editor.save_to_file(),
+      AppMessage::DeleteNotification(idx) => {
+        self.notifications.remove(idx);
+        Ok(())
+      }
       AppMessage::New => {
         self.editor.set_groups(vec![]);
         Ok(())
@@ -56,6 +62,9 @@ impl Sandbox for App {
     };
 
     if let Err(err) = res {
+      self
+        .notifications
+        .push(Notification { header: "Ошибка!".into(), body: "Не реализовано :(".into() });
       eprintln!("{}", err);
     }
   }
@@ -74,15 +83,33 @@ impl Sandbox for App {
           })
           .collect(),
       )
-      .padding(15),
+      .padding([0, 15]),
     );
+
+    let notifications_container = scrollable(
+      container(
+        row(
+          self
+            .notifications
+            .iter()
+            .enumerate()
+            .map(|(idx, n)| n.view().map(move |_| AppMessage::DeleteNotification(idx)))
+            .collect(),
+        )
+        .spacing(10)
+        .padding([10, 0]),
+      )
+      .padding(10),
+    )
+    .horizontal_scroll(iced::widget::scrollable::Properties::default().margin(5));
 
     let content = column![
       toolbar(),
       Rule::horizontal(1),
       container(self.editor.view().map(AppMessage::Editor)).padding([10, 0, 0, 0]),
       Rule::horizontal(1),
-      container(groups).width(Length::Fill).padding([15, 0, 0, 0])
+      notifications_container,
+      container(groups).width(Length::Fill).padding([0, 0, 0, 0])
     ];
 
     container(content).padding(5).into()

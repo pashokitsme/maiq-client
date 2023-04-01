@@ -85,6 +85,7 @@ impl SnapshotEditor {
   }
 
   pub fn load_from_default(&self, day: &DefaultDay) -> Vec<Group> {
+    println!("Loading {}", day.day);
     let is_even = self.snapshot.date.iso_week().week0() % 2 == 0;
     let mut res = day
       .groups

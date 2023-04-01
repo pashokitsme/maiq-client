@@ -9,6 +9,7 @@ pub mod editor;
 pub mod group;
 pub mod lesson;
 pub mod toolbar;
+pub mod notification;
 
 pub type GroupMessage = group::Message;
 pub type LessonMessage = lesson::Message;
