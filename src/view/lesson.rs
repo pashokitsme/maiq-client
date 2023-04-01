@@ -1,6 +1,6 @@
 use iced::{
   theme::Button,
-  widget::{button, row, text, text_input},
+  widget::{button, row, text_input},
   Element, Length,
 };
 use iced_aw::Icon;
@@ -77,7 +77,6 @@ impl Component for Lesson {
 
   fn view(&self) -> Element<Self::Message> {
     row![
-      text("#").size(20),
       text_input("#", &self.num.map(|n| n.to_string()).unwrap_or_default(), Message::EditNum).width(20),
       text_input("&", &self.subgroup.map(|sb| sb.to_string()).unwrap_or_default(), Message::EditSubgroup).width(20),
       text_input("Предмет", &self.name, Message::EditName).width(Length::FillPortion(7)),

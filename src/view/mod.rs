@@ -5,14 +5,14 @@ use iced::{
 };
 use iced_aw::{Icon, ICON_FONT};
 
+pub mod editor;
 pub mod group;
 pub mod lesson;
-pub mod menu;
-pub mod snapshot_editor;
+pub mod toolbar;
 
 pub type GroupMessage = group::Message;
 pub type LessonMessage = lesson::Message;
-pub type EditorMessage = snapshot_editor::Message;
+pub type EditorMessage = editor::Message;
 
 pub trait Component {
   type Message;

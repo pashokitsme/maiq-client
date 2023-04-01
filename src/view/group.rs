@@ -4,7 +4,7 @@ use iced::theme::Button;
 use iced::widget::{row, text_input};
 use iced::widget::{column, container, rule::Rule};
 use iced::{Element, Length};
-use iced_aw::{Icon};
+use iced_aw::Icon;
 use maiq_shared::{Group, Lesson, Uid};
 
 pub trait GroupComponent {

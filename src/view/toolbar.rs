@@ -1,7 +1,4 @@
-use iced::{
-  widget::{row},
-  Length,
-};
+use iced::{widget::row, Length};
 use iced_aw::{
   menu::{MenuBar, MenuTree},
   Icon,

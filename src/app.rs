@@ -3,7 +3,7 @@ use iced::{
   Length, Sandbox,
 };
 
-use crate::components::{menu::toolbar, snapshot_editor::SnapshotEditor, Component, EditorMessage};
+use crate::view::{editor::SnapshotEditor, toolbar::toolbar, Component, EditorMessage};
 
 #[derive(Debug, Clone)]
 pub enum AppMessage {
@@ -31,6 +31,7 @@ impl Sandbox for App {
   }
 
   fn update(&mut self, message: Self::Message) {
+    info!("Message: {:?}", message);
     match message {
       AppMessage::Editor(m) => self.editor.update(m),
       AppMessage::Import => todo!(),

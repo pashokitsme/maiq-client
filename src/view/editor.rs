@@ -4,7 +4,7 @@ use iced::widget::{button, container, row, text};
 use iced_aw::{date_picker::Date, DatePicker, Icon, ICON_FONT};
 use maiq_shared::{Group, Snapshot, Uid};
 
-use super::{group::GroupComponent, icon_button, Component, GroupMessage};
+use super::{icon_button, Component, GroupMessage};
 
 #[derive(Debug)]
 pub struct SnapshotEditor {
@@ -40,10 +40,6 @@ impl SnapshotEditor {
     }
   }
 
-  pub fn uid(&self) -> &str {
-    &self.snapshot.uid
-  }
-
   pub fn create_group(&mut self) {
     self.snapshot.groups.push(Group::default())
   }
@@ -51,13 +47,23 @@ impl SnapshotEditor {
   pub fn remove_group(&mut self, idx: usize) {
     self.snapshot.groups.remove(idx);
   }
+
+  fn save_to_file(&self) -> anyhow::Result<()> {
+    // let path = format!("{}");
+    Ok(())
+  }
+
+  fn new_file(&mut self) {}
+
+  fn load_from_file(&mut self) -> anyhow::Result<()> {
+    Ok(())
+  }
 }
 
 impl Component for SnapshotEditor {
   type Message = Message;
 
   fn update(&mut self, message: Self::Message) {
-    println!("Editor update: {:?}", message);
     self.snapshot.uid = self.snapshot.uid();
     match message {
       Message::Group((idx, GroupMessage::Remove)) => self.remove_group(idx),
