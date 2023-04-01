@@ -68,6 +68,7 @@ impl Component for Group {
       self
         .lessons
         .iter()
+        .rev()
         .enumerate()
         .map(|(idx, l)| l.view().map(move |msg| Message::Lesson((idx, msg))))
         .collect(),

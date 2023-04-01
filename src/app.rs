@@ -24,6 +24,7 @@ pub enum AppMessage {
 pub struct App {
   editor: SnapshotEditor,
   notifications: Vec<Notification>,
+  i: usize,
 }
 
 impl Sandbox for App {
@@ -64,7 +65,7 @@ impl Sandbox for App {
     if let Err(err) = res {
       self
         .notifications
-        .push(Notification { header: "Ошибка!".into(), body: "Не реализовано :(".into() });
+        .push(Notification { header: "Ошибка!".into(), body: "Не реализовано".into() });
       eprintln!("{}", err);
     }
   }
@@ -92,6 +93,7 @@ impl Sandbox for App {
           self
             .notifications
             .iter()
+            .rev()
             .enumerate()
             .map(|(idx, n)| n.view().map(move |_| AppMessage::DeleteNotification(idx)))
             .collect(),

@@ -1,8 +1,7 @@
 use super::{icon_button, Component};
 use iced::{
   theme::{Button, Container},
-  widget::{column, container, row, text},
-  Length,
+  widget::{column, container, row, text}
 };
 use iced_aw::Icon;
 
