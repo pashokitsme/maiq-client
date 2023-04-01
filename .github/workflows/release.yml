@@ -18,8 +18,8 @@ jobs:
 
       - name: Archive build files
         run: |
-          cd ./target/release        
-          tar -c -f maiq-client.tar.gz -z -l maiq-client.exe default/*
+          cd ./target/release
+          tar -c -f maiq-client.tar.gz -z -l maiq-client.exe default/* .env
       - name: Release
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:

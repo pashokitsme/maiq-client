@@ -43,28 +43,29 @@ impl Sandbox for App {
     let res = match message {
       AppMessage::Editor(m) => {
         self.editor.update(m);
-        Ok(())
+        Ok(None)
       }
-      AppMessage::Import(idx) => {
-        self.editor.set_groups(self.editor.load_from_default(&DEFAULTS[idx]));
-        Ok(())
-      }
-      AppMessage::Sort => Ok(self.editor.sort()),
+      AppMessage::Import(idx) => self.editor.set_groups(self.editor.load_from_default(&DEFAULTS[idx])),
+      AppMessage::Sort => self.editor.sort(),
       AppMessage::Export => self.editor.save_to_file(),
       AppMessage::DeleteNotification(idx) => {
         self.notifications.remove(idx);
-        Ok(())
+        Ok(None)
       }
-      AppMessage::New => Ok(self.editor.set_groups(vec![])),
-      AppMessage::Nothing => Ok(()),
+      AppMessage::New => self.editor.set_groups(vec![]),
+      AppMessage::Nothing => Ok(None),
       _ => Err(anyhow!("Not yet implemented!")),
     };
 
-    if let Err(err) = res {
+    if let Err(err) = &res {
       self
         .notifications
         .push(Notification::error("Ошибка!", "Не реализовано"));
       eprintln!("{}", err);
+    }
+
+    if let Ok(Some(ok)) = &res {
+      self.notifications.push(Notification::ok("Инфо", ok));
     }
   }
 
@@ -85,6 +86,7 @@ impl Sandbox for App {
       .padding([0, 15]),
     );
 
+    let noty_count = self.notifications.len();
     let notifications_container = scrollable(
       container(
         row(
@@ -93,7 +95,10 @@ impl Sandbox for App {
             .iter()
             .rev()
             .enumerate()
-            .map(|(idx, n)| n.view().map(move |_| AppMessage::DeleteNotification(idx)))
+            .map(|(idx, n)| {
+              n.view()
+                .map(move |_| AppMessage::DeleteNotification(noty_count - (idx + 1)))
+            })
             .collect(),
         )
         .spacing(10)

@@ -22,11 +22,12 @@ fn rcopy(from: &Path, to: &Path) {
 
 fn main() {
   println!("cargo:rerun-if-changed=defaults");
+  println!("cargo:rerun-if-changed=.env");
   let manifest_dir_str = env::var("CARGO_MANIFEST_DIR").unwrap();
   let default = Path::new(&manifest_dir_str).join("default");
   let output = Path::new(&manifest_dir_str)
     .join("target")
-    .join(get_build_profile_name())
-    .join("default");
-  rcopy(&default, &output);
+    .join(get_build_profile_name());
+  rcopy(&default, &output.join("default"));
+  _ = fs::copy(Path::new(&manifest_dir_str).join(".env"), output.join(".env"));
 }

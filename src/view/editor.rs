@@ -58,13 +58,14 @@ impl SnapshotEditor {
     self.snapshot.groups.remove(idx);
   }
 
-  pub fn sort(&mut self) {
+  pub fn sort(&mut self) -> anyhow::Result<Option<String>> {
     self.snapshot.groups.sort_by(|a, b| a.name.cmp(&b.name));
     self
       .snapshot
       .groups
       .iter_mut()
-      .for_each(|g| g.lessons.sort_by_key(|k| k.num))
+      .for_each(|g| g.lessons.sort_by_key(|k| k.num));
+    Ok(Some("Отсортировано".into()))
   }
 
   fn update_date(&mut self) {
@@ -75,7 +76,7 @@ impl SnapshotEditor {
     self.snapshot.date = date_utc;
   }
 
-  pub fn save_to_file(&mut self) -> anyhow::Result<()> {
+  pub fn save_to_file(&mut self) -> anyhow::Result<Option<String>> {
     let dir = &*env::export_dir();
     if Path::new(dir).metadata().is_err() {
       fs::create_dir(dir).unwrap();
@@ -86,11 +87,12 @@ impl SnapshotEditor {
     let writer = BufWriter::new(file);
     serde_json::to_writer_pretty(writer, &self.snapshot).unwrap();
     println!("Exported to {}", filename);
-    Ok(())
+    Ok(Some(format!("Экспортировано в {}", filename)))
   }
 
-  pub fn set_groups(&mut self, groups: Vec<Group>) {
+  pub fn set_groups(&mut self, groups: Vec<Group>) -> anyhow::Result<Option<String>> {
     self.snapshot.groups = groups;
+    Ok(Some(format!("Группы: {:?}", self.snapshot.groups)))
   }
 
   pub fn load_from_default(&self, day: &DefaultDay) -> Vec<Group> {

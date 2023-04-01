@@ -16,6 +16,10 @@ impl Notification {
   pub fn error(header: impl Into<String>, body: impl Into<String>) -> Self {
     Self { header: header.into(), body: body.into(), color: Color::from_rgb8(240, 0, 0) }
   }
+
+  pub fn ok(header: impl Into<String>, body: impl Into<String>) -> Self {
+    Self { header: header.into(), body: body.into(), color: Color::from_rgb8(0, 0, 0) }
+  }
 }
 
 impl Component for Notification {
