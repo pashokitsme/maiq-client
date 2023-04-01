@@ -1,6 +1,6 @@
 use iced::{
   theme::Button,
-  widget::{button, container, row, text},
+  widget::{button, row, text},
   Element,
 };
 use iced_aw::{Icon, ICON_FONT};

@@ -1,10 +1,10 @@
 use super::lesson::LessonComponent;
 use super::{icon_button, Component, LessonMessage};
 use iced::theme::Button;
-use iced::widget::{button, row, text, text_input};
+use iced::widget::{row, text_input};
 use iced::widget::{column, container, rule::Rule};
 use iced::{Element, Length};
-use iced_aw::{Icon, ICON_FONT};
+use iced_aw::{Icon};
 use maiq_shared::{Group, Lesson, Uid};
 
 pub trait GroupComponent {

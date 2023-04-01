@@ -1,5 +1,5 @@
 use iced::{
-  widget::{row, text},
+  widget::{row},
   Length,
 };
 use iced_aw::{

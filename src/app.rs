@@ -1,33 +1,15 @@
-use std::{
-  fs::{self, File},
-  io::BufWriter,
-  path::Path,
-};
-
 use iced::{
-  theme::Button,
-  widget::{button, column, container, row, scrollable, text, text_input, Rule},
+  widget::{column, container, scrollable, Rule},
   Length, Sandbox,
 };
 
-use maiq_shared::{
-  utils::time::{now, now_date_offset},
-  Snapshot, Uid,
-};
-
-use crate::components::{
-  basic_button,
-  group::{GroupComponent, Message},
-  menu::toolbar,
-  snapshot_editor::SnapshotEditor,
-  Component, EditorMessage,
-};
+use crate::components::{menu::toolbar, snapshot_editor::SnapshotEditor, Component, EditorMessage};
 
 #[derive(Debug, Clone)]
 pub enum AppMessage {
   Editor(EditorMessage),
   Sort,
-  ImportTriggered,
+  Import,
   Export,
   Dummy,
 }
@@ -51,7 +33,7 @@ impl Sandbox for App {
   fn update(&mut self, message: Self::Message) {
     match message {
       AppMessage::Editor(m) => self.editor.update(m),
-      AppMessage::ImportTriggered => todo!(),
+      AppMessage::Import => todo!(),
       AppMessage::Sort => todo!(),
       AppMessage::Export => todo!(),
       AppMessage::Dummy => println!("Not implemented"),
