@@ -58,6 +58,15 @@ impl SnapshotEditor {
     self.snapshot.groups.remove(idx);
   }
 
+  pub fn sort(&mut self) {
+    self.snapshot.groups.sort_by(|a, b| a.name.cmp(&b.name));
+    self
+      .snapshot
+      .groups
+      .iter_mut()
+      .for_each(|g| g.lessons.sort_by_key(|k| k.num))
+  }
+
   fn update_date(&mut self) {
     self.snapshot.parsed_date = now();
     let (d, m, y) = (self.date.day, self.date.month, self.date.year);
@@ -71,7 +80,7 @@ impl SnapshotEditor {
     if Path::new(dir).metadata().is_err() {
       fs::create_dir(dir).unwrap();
     }
-
+    self.snapshot.uid = self.snapshot.uid();
     let filename = format!("{}/{}.json", dir, self.snapshot.uid);
     let file = File::create(&filename).unwrap();
     let writer = BufWriter::new(file);

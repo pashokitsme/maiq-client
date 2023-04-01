@@ -35,7 +35,7 @@ fn default_lessons_menu<'a>(default: &[DefaultDay]) -> MenuTree<'a, Message, ice
   MenuTree::with_children(
     super::basic_button(
       row![with_icon("Импорт", Icon::Download), text(Icon::ChevronBarRight).font(ICON_FONT)],
-      AppMessage::Dummy,
+      AppMessage::Nothing,
     )
     .width(Length::Fill),
     default
@@ -49,7 +49,7 @@ fn default_lessons_menu<'a>(default: &[DefaultDay]) -> MenuTree<'a, Message, ice
 fn edit_menu<'a>() -> MenuTree<'a, Message, iced::Renderer> {
   MenuTree::with_children(
     with_icon("Редактировать", Icon::PencilSquare),
-    vec![menu_button(with_icon("Сортировка", Icon::ArrowRepeat), AppMessage::Dummy)],
+    vec![menu_button(with_icon("Сортировка", Icon::ArrowRepeat), AppMessage::Sort)],
   )
 }
 

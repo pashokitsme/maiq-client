@@ -18,13 +18,13 @@ pub enum AppMessage {
   New,
   DeleteNotification(usize),
   Dummy,
+  Nothing,
 }
 
 #[derive(Default)]
 pub struct App {
   editor: SnapshotEditor,
   notifications: Vec<Notification>,
-  i: usize,
 }
 
 impl Sandbox for App {
@@ -39,7 +39,7 @@ impl Sandbox for App {
   }
 
   fn update(&mut self, message: Self::Message) {
-    info!("Message: {:?}", message);
+    println!("Message: {:?}", message);
     let res = match message {
       AppMessage::Editor(m) => {
         self.editor.update(m);
@@ -49,16 +49,14 @@ impl Sandbox for App {
         self.editor.set_groups(self.editor.load_from_default(&DEFAULTS[idx]));
         Ok(())
       }
-      AppMessage::Sort => todo!(),
+      AppMessage::Sort => Ok(self.editor.sort()),
       AppMessage::Export => self.editor.save_to_file(),
       AppMessage::DeleteNotification(idx) => {
         self.notifications.remove(idx);
         Ok(())
       }
-      AppMessage::New => {
-        self.editor.set_groups(vec![]);
-        Ok(())
-      }
+      AppMessage::New => Ok(self.editor.set_groups(vec![])),
+      AppMessage::Nothing => Ok(()),
       _ => Err(anyhow!("Not yet implemented!")),
     };
 
@@ -99,7 +97,7 @@ impl Sandbox for App {
             .collect(),
         )
         .spacing(10)
-        .padding([10, 0]),
+        .padding([0, 0]),
       )
       .padding(10),
     )

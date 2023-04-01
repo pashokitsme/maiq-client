@@ -2,9 +2,6 @@ use app::App;
 use iced::{Sandbox, Settings};
 use include_dir::{include_dir, Dir};
 
-#[macro_use]
-extern crate log;
-
 mod app;
 mod env;
 mod view;
