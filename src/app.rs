@@ -65,7 +65,7 @@ impl Sandbox for App {
     if let Err(err) = res {
       self
         .notifications
-        .push(Notification { header: "Ошибка!".into(), body: "Не реализовано".into() });
+        .push(Notification::error("Ошибка!", "Не реализовано"));
       eprintln!("{}", err);
     }
   }
