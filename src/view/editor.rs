@@ -80,10 +80,6 @@ impl SnapshotEditor {
     Ok(())
   }
 
-  pub fn new_file(&mut self) {
-    self.snapshot.groups = vec![];
-  }
-
   pub fn set_groups(&mut self, groups: Vec<Group>) {
     self.snapshot.groups = groups;
   }

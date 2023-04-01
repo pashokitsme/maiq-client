@@ -49,7 +49,7 @@ impl Sandbox for App {
       AppMessage::Sort => todo!(),
       AppMessage::Export => self.editor.save_to_file(),
       AppMessage::New => {
-        self.editor.new_file();
+        self.editor.set_groups(vec![]);
         Ok(())
       }
       _ => Err(anyhow!("Not yet implemented!")),

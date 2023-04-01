@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: cargo +stable-msvc build --release
+
+      - name: Archive build files
+        run: |
+          cd ./target/cli        
+          tar -c -f maiq-client.tar.gz -z -l maiq-client.exe default/*
+      - name: Release
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: latest
+          title: Latest build
+          files: ./target/release/maiq-client.tar.gz
+          prerelease: false
