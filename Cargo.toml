@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 chrono = "0.4.24"
 iced = { version = "0.8.0", features = ["tokio"] }
+iced_aw = "0.4.1"
 include_dir = "0.7.3"
 maiq-shared = { git = "https://github.com/pashokitsme/maiq-parser", branch = "optionable-lesson-num", version = "0.3.0" }
 serde = { version = "1.0.159", features = ["serde_derive"] }

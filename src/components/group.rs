@@ -1,18 +1,20 @@
-use super::lesson::{LessonComponent, LessonMessage};
-use super::Component;
+use super::lesson::LessonComponent;
+use super::{icon_button, Component, LessonMessage};
 use iced::theme::Button;
 use iced::widget::{button, row, text, text_input};
 use iced::widget::{column, container, rule::Rule};
 use iced::{Element, Length};
+use iced_aw::{Icon, ICON_FONT};
 use maiq_shared::{Group, Lesson, Uid};
 
 pub trait GroupComponent {
+  fn new() -> Self;
   fn update_lesson(&mut self, idx: usize, message: LessonMessage);
   fn remove_lesson(&mut self, idx: usize);
 }
 
 #[derive(Debug, Clone)]
-pub enum GroupMessage {
+pub enum Message {
   EditName(String),
   Lesson((usize, LessonMessage)),
   CreateLesson,
@@ -20,6 +22,10 @@ pub enum GroupMessage {
 }
 
 impl GroupComponent for Group {
+  fn new() -> Self {
+    Group { uid: "?".into(), ..Group::default() }
+  }
+
   fn update_lesson(&mut self, idx: usize, message: LessonMessage) {
     if let Some(l) = self.lessons.get_mut(idx) {
       l.update(message);
@@ -32,26 +38,27 @@ impl GroupComponent for Group {
 }
 
 impl Component for Group {
-  type Message = GroupMessage;
+  type Message = Message;
 
-  fn update(&mut self, message: GroupMessage) {
+  fn update(&mut self, message: Message) {
     self.uid = self.uid();
     match message {
-      GroupMessage::EditName(name) => self.name = name,
-      GroupMessage::CreateLesson => self.lessons.push(Lesson::new(self.lessons.last())),
-      GroupMessage::Lesson((idx, LessonMessage::Remove)) => self.remove_lesson(idx),
-      GroupMessage::Lesson((idx, message)) => self.update_lesson(idx, message),
+      Message::EditName(name) => self.name = name,
+      Message::CreateLesson => self.lessons.push(Lesson::new(self.lessons.last())),
+      Message::Lesson((idx, LessonMessage::Remove)) => self.remove_lesson(idx),
+      Message::Lesson((idx, message)) => self.update_lesson(idx, message),
       _ => (),
     }
   }
 
   fn view(&self) -> Element<Self::Message> {
-    let name_field = text_input("Группа", &self.name.to_string(), GroupMessage::EditName).width(Length::Fixed(80.));
+    let name_field = text_input("Группа", &self.name.to_string(), Message::EditName).width(Length::Fixed(80.));
     let header = row![
       name_field,
-      button("+").on_press(GroupMessage::CreateLesson),
-      button("R").on_press(GroupMessage::Remove).style(Button::Destructive),
-      text(format!("UUID: {}", self.uid))
+      icon_button(Icon::Plus).on_press(Message::CreateLesson),
+      icon_button(Icon::Trash)
+        .on_press(Message::Remove)
+        .style(Button::Destructive),
     ]
     .align_items(iced::Alignment::Center)
     .spacing(20)
@@ -62,7 +69,7 @@ impl Component for Group {
         .lessons
         .iter()
         .enumerate()
-        .map(|(idx, l)| l.view().map(move |msg| GroupMessage::Lesson((idx, msg))))
+        .map(|(idx, l)| l.view().map(move |msg| Message::Lesson((idx, msg))))
         .collect(),
     )
     .spacing(10)

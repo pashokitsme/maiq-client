@@ -3,9 +3,10 @@ use iced::{
   widget::{button, row, text, text_input},
   Element, Length,
 };
+use iced_aw::Icon;
 use maiq_shared::Lesson;
 
-use super::Component;
+use super::{icon_button, Component};
 
 pub trait LessonComponent {
   fn new(prev: Option<&Lesson>) -> Self;
@@ -14,7 +15,7 @@ pub trait LessonComponent {
 }
 
 #[derive(Debug, Clone)]
-pub enum LessonMessage {
+pub enum Message {
   EditNum(String),
   EditSubgroup(String),
   EditName(String),
@@ -60,16 +61,16 @@ impl LessonComponent for Lesson {
 }
 
 impl Component for Lesson {
-  type Message = LessonMessage;
+  type Message = Message;
 
   fn update(&mut self, message: Self::Message) {
     match message {
-      LessonMessage::EditNum(n) => self.set_num(n),
-      LessonMessage::EditSubgroup(sb) => self.set_subgroup(sb),
-      LessonMessage::EditName(x) => self.name = x,
-      LessonMessage::EditTeacher(x) => self.teacher = Some(x),
-      LessonMessage::EditClassroom(x) => self.classroom = Some(x),
-      LessonMessage::Default => *self = Self::default(),
+      Message::EditNum(n) => self.set_num(n),
+      Message::EditSubgroup(sb) => self.set_subgroup(sb),
+      Message::EditName(x) => self.name = x,
+      Message::EditTeacher(x) => self.teacher = Some(x),
+      Message::EditClassroom(x) => self.classroom = Some(x),
+      Message::Default => *self = Self::default(),
       _ => (),
     }
   }
@@ -77,15 +78,17 @@ impl Component for Lesson {
   fn view(&self) -> Element<Self::Message> {
     row![
       text("#").size(20),
-      text_input("#", &self.num.map(|n| n.to_string()).unwrap_or_default(), LessonMessage::EditNum).width(20),
-      text_input("&", &self.subgroup.map(|sb| sb.to_string()).unwrap_or_default(), LessonMessage::EditSubgroup).width(20),
-      text_input("Предмет", &self.name, LessonMessage::EditName).width(Length::FillPortion(7)),
-      text_input("Преподаватель", if let Some(teacher) = &self.teacher { teacher } else { "" }, LessonMessage::EditTeacher)
+      text_input("#", &self.num.map(|n| n.to_string()).unwrap_or_default(), Message::EditNum).width(20),
+      text_input("&", &self.subgroup.map(|sb| sb.to_string()).unwrap_or_default(), Message::EditSubgroup).width(20),
+      text_input("Предмет", &self.name, Message::EditName).width(Length::FillPortion(7)),
+      text_input("Преподаватель", if let Some(teacher) = &self.teacher { teacher } else { "" }, Message::EditTeacher)
         .width(Length::FillPortion(3)),
-      text_input("Ауд.", if let Some(classroom) = &self.classroom { classroom } else { "" }, LessonMessage::EditClassroom)
+      text_input("Ауд.", if let Some(classroom) = &self.classroom { classroom } else { "" }, Message::EditClassroom)
         .width(Length::FillPortion(1)),
-      button("D").on_press(LessonMessage::Default).style(Button::Secondary),
-      button("R").on_press(LessonMessage::Remove).style(Button::Destructive)
+      button("D").on_press(Message::Default).style(Button::Secondary),
+      icon_button(Icon::Trash)
+        .on_press(Message::Remove)
+        .style(Button::Destructive)
     ]
     .align_items(iced::Alignment::Center)
     .padding([0, 0, 0, 15])
