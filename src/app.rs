@@ -1,16 +1,21 @@
+use anyhow::anyhow;
 use iced::{
   widget::{column, container, scrollable, Rule},
   Length, Sandbox,
 };
 
-use crate::view::{editor::SnapshotEditor, toolbar::toolbar, Component, EditorMessage};
+use crate::{
+  env::DEFAULTS,
+  view::{editor::SnapshotEditor, toolbar::toolbar, Component, EditorMessage},
+};
 
 #[derive(Debug, Clone)]
 pub enum AppMessage {
   Editor(EditorMessage),
   Sort,
-  Import,
+  Import(usize),
   Export,
+  New,
   Dummy,
 }
 
@@ -32,13 +37,27 @@ impl Sandbox for App {
 
   fn update(&mut self, message: Self::Message) {
     info!("Message: {:?}", message);
-    match message {
-      AppMessage::Editor(m) => self.editor.update(m),
-      AppMessage::Import => todo!(),
+    let res = match message {
+      AppMessage::Editor(m) => {
+        self.editor.update(m);
+        Ok(())
+      }
+      AppMessage::Import(idx) => {
+        self.editor.set_groups(self.editor.load_from_default(&DEFAULTS[idx]));
+        Ok(())
+      }
       AppMessage::Sort => todo!(),
-      AppMessage::Export => todo!(),
-      AppMessage::Dummy => println!("Not implemented"),
+      AppMessage::Export => self.editor.save_to_file(),
+      AppMessage::New => {
+        self.editor.new_file();
+        Ok(())
+      }
+      _ => Err(anyhow!("Not yet implemented!")),
     };
+
+    if let Err(err) = res {
+      eprintln!("{}", err);
+    }
   }
 
   fn view(&self) -> iced::Element<'_, Self::Message> {

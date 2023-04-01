@@ -1,10 +1,15 @@
-use iced::{widget::row, Length};
+use chrono::Weekday;
+use iced::{
+  widget::{row, text},
+  Length,
+};
 use iced_aw::{
   menu::{MenuBar, MenuTree},
-  Icon,
+  Icon, ICON_FONT,
 };
+use maiq_shared::default::DefaultDay;
 
-use crate::app::AppMessage;
+use crate::{app::AppMessage, env::DEFAULTS};
 
 use super::with_icon;
 
@@ -19,10 +24,25 @@ fn file_menu<'a>() -> MenuTree<'a, Message, iced::Renderer> {
   MenuTree::with_children(
     with_icon("Файл", Icon::FileEarmark),
     vec![
-      menu_button(with_icon("Новый", Icon::FileEarmark), AppMessage::Dummy),
-      menu_button(with_icon("Импорт", Icon::Download), AppMessage::Dummy),
-      menu_button(with_icon("Экспорт", Icon::Upload), AppMessage::Dummy),
+      menu_button(with_icon("Новый", Icon::FileEarmark), AppMessage::New),
+      default_lessons_menu(&DEFAULTS),
+      menu_button(with_icon("Экспорт", Icon::Upload), AppMessage::Export),
     ],
+  )
+}
+
+fn default_lessons_menu<'a>(default: &[DefaultDay]) -> MenuTree<'a, Message, iced::Renderer> {
+  MenuTree::with_children(
+    super::basic_button(
+      row![with_icon("Импорт", Icon::Download), text(Icon::ChevronBarRight).font(ICON_FONT)],
+      AppMessage::Dummy,
+    )
+    .width(Length::Fill),
+    default
+      .iter()
+      .enumerate()
+      .map(|(idx, d)| menu_button(with_icon(map_weekday_to_str(d.day), Icon::Calendar), AppMessage::Import(idx)))
+      .collect(),
   )
 }
 
@@ -45,4 +65,16 @@ fn server_menu<'a>() -> MenuTree<'a, Message, iced::Renderer> {
 
 pub fn toolbar<'a>() -> Element<'a> {
   row![MenuBar::new(vec![file_menu(), edit_menu(), server_menu()]).spacing(10.0)].into()
+}
+
+const fn map_weekday_to_str(d: Weekday) -> &'static str {
+  match d {
+    Weekday::Mon => "Понедельник",
+    Weekday::Tue => "Вторник",
+    Weekday::Wed => "Среда",
+    Weekday::Thu => "Четверг",
+    Weekday::Fri => "Пятница",
+    Weekday::Sat => "Суббота",
+    Weekday::Sun => "Воскресенье",
+  }
 }

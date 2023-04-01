@@ -10,6 +10,7 @@ dotenvy = "0.15.7"
 iced = { version = "0.8.0", features = ["tokio"] }
 iced_aw = "0.4.1"
 include_dir = "0.7.3"
+lazy_static = "1.4.0"
 log = "0.4.17"
 maiq-shared = { git = "https://github.com/pashokitsme/maiq-parser", branch = "optionable-lesson-num", version = "0.3.0" }
 pretty_env_logger = "0.4.0"

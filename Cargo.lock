@@ -1433,6 +1433,7 @@ dependencies = [
  "iced",
  "iced_aw",
  "include_dir",
+ "lazy_static",
  "log",
  "maiq-shared",
  "pretty_env_logger",
