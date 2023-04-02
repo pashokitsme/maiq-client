@@ -1,6 +1,7 @@
 use chrono::Weekday;
 use iced::{
-  widget::{row, text},
+  alignment::{Horizontal, Vertical},
+  widget::{container, row, text, Rule},
   Length,
 };
 use iced_aw::{
@@ -25,24 +26,38 @@ fn file_menu<'a>() -> MenuTree<'a, Message, iced::Renderer> {
     with_icon("Файл", Icon::FileEarmark),
     vec![
       menu_button(with_icon("Новый", Icon::FileEarmark), AppMessage::New),
-      default_lessons_menu(&DEFAULTS),
+      import_menu(&DEFAULTS),
       menu_button(with_icon("Экспорт", Icon::Upload), AppMessage::Export),
     ],
   )
 }
 
-fn default_lessons_menu<'a>(default: &[DefaultDay]) -> MenuTree<'a, Message, iced::Renderer> {
+fn import_menu<'a>(default: &[DefaultDay]) -> MenuTree<'a, Message, iced::Renderer> {
+  let mut childs = vec![
+    menu_button(with_icon("Из файла", Icon::Calendar), AppMessage::ImportFromFile),
+    MenuTree::new(
+      text("Стандартное")
+        .vertical_alignment(Vertical::Center)
+        .horizontal_alignment(Horizontal::Center)
+        .height(Length::Fill)
+        .width(Length::Fill),
+    ),
+    menu_button(with_icon("Сегодня", Icon::Calendar), AppMessage::ImportToday),
+    menu_button(with_icon("Завтра", Icon::Calendar), AppMessage::ImportNext)
+  ];
+  default
+    .iter()
+    .enumerate()
+    .map(|(idx, d)| menu_button(with_icon(map_weekday_to_str(d.day), Icon::Calendar), AppMessage::Import(idx)))
+    .for_each(|menu| childs.push(menu));
+
   MenuTree::with_children(
     super::basic_button(
       row![with_icon("Импорт", Icon::Download), text(Icon::ChevronBarRight).font(ICON_FONT)],
       AppMessage::Nothing,
     )
     .width(Length::Fill),
-    default
-      .iter()
-      .enumerate()
-      .map(|(idx, d)| menu_button(with_icon(map_weekday_to_str(d.day), Icon::Calendar), AppMessage::Import(idx)))
-      .collect(),
+    childs,
   )
 }
 

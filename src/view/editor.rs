@@ -92,7 +92,7 @@ impl SnapshotEditor {
 
   pub fn set_groups(&mut self, groups: Vec<Group>) -> anyhow::Result<Option<String>> {
     self.snapshot.groups = groups;
-    Ok(Some(format!("Группы: {:?}", self.snapshot.groups)))
+    Ok(Some(format!("Группы: {:?}", self.snapshot.groups.iter().map(|g| &g.name).collect::<Vec<&String>>())))
   }
 
   pub fn load_from_default(&self, day: &DefaultDay) -> Vec<Group> {

@@ -1,8 +1,10 @@
 use anyhow::anyhow;
+use chrono::{Datelike, Days, Weekday};
 use iced::{
   widget::{column, container, row, scrollable, Rule},
   Length, Sandbox,
 };
+use maiq_shared::utils::time::{now_date, now_date_offset};
 
 use crate::{
   env::DEFAULTS,
@@ -14,6 +16,9 @@ pub enum AppMessage {
   Editor(EditorMessage),
   Sort,
   Import(usize),
+  ImportToday,
+  ImportNext,
+  ImportFromFile,
   Export,
   New,
   DeleteNotification(usize),
@@ -25,6 +30,19 @@ pub enum AppMessage {
 pub struct App {
   editor: SnapshotEditor,
   notifications: Vec<Notification>,
+}
+
+fn resolve_weekday(today: bool) -> Weekday {
+  let date = match today {
+    true => now_date(),
+    false => now_date_offset(1),
+  };
+  let weekday = date.weekday();
+  if weekday == Weekday::Sun {
+    weekday.succ()
+  } else {
+    weekday
+  }
 }
 
 impl Sandbox for App {
@@ -46,6 +64,16 @@ impl Sandbox for App {
         Ok(None)
       }
       AppMessage::Import(idx) => self.editor.set_groups(self.editor.load_from_default(&DEFAULTS[idx])),
+      AppMessage::ImportToday => self.editor.set_groups(
+        self
+          .editor
+          .load_from_default(&DEFAULTS[resolve_weekday(true).number_from_monday() as usize - 1]),
+      ),
+      AppMessage::ImportNext => self.editor.set_groups(
+        self
+          .editor
+          .load_from_default(&DEFAULTS[resolve_weekday(false).number_from_monday() as usize - 1]),
+      ),
       AppMessage::Sort => self.editor.sort(),
       AppMessage::Export => self.editor.save_to_file(),
       AppMessage::DeleteNotification(idx) => {
@@ -87,24 +115,22 @@ impl Sandbox for App {
     );
 
     let noty_count = self.notifications.len();
+    let pad = if noty_count > 0 { 20 } else { 10 };
     let notifications_container = scrollable(
-      container(
-        row(
-          self
-            .notifications
-            .iter()
-            .rev()
-            .enumerate()
-            .map(|(idx, n)| {
-              n.view()
-                .map(move |_| AppMessage::DeleteNotification(noty_count - (idx + 1)))
-            })
-            .collect(),
-        )
-        .spacing(10)
-        .padding([0, 0]),
+      row(
+        self
+          .notifications
+          .iter()
+          .rev()
+          .enumerate()
+          .map(|(idx, n)| {
+            n.view()
+              .map(move |_| AppMessage::DeleteNotification(noty_count - (idx + 1)))
+          })
+          .collect(),
       )
-      .padding(10),
+      .spacing(10)
+      .padding([10, 0, pad, 0]),
     )
     .horizontal_scroll(iced::widget::scrollable::Properties::default().margin(5));
 
