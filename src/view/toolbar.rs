@@ -1,7 +1,7 @@
 use chrono::Weekday;
 use iced::{
   alignment::{Horizontal, Vertical},
-  widget::{container, row, text, Rule},
+  widget::{row, text},
   Length,
 };
 use iced_aw::{
@@ -34,7 +34,6 @@ fn file_menu<'a>() -> MenuTree<'a, Message, iced::Renderer> {
 
 fn import_menu<'a>(default: &[DefaultDay]) -> MenuTree<'a, Message, iced::Renderer> {
   let mut childs = vec![
-    menu_button(with_icon("Из файла", Icon::Calendar), AppMessage::ImportFromFile),
     MenuTree::new(
       text("Стандартное")
         .vertical_alignment(Vertical::Center)

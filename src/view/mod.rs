@@ -5,13 +5,13 @@ use iced::{
 };
 use iced_aw::{Icon, ICON_FONT};
 
+pub mod default_group;
 pub mod editor;
-pub mod group;
 pub mod lesson;
-pub mod toolbar;
 pub mod notification;
+pub mod toolbar;
 
-pub type GroupMessage = group::Message;
+pub type GroupMessage = default_group::Message;
 pub type LessonMessage = lesson::Message;
 pub type EditorMessage = editor::Message;
 

@@ -5,10 +5,9 @@ use iced::widget::{column, container, rule::Rule};
 use iced::widget::{row, text_input};
 use iced::{Element, Length};
 use iced_aw::Icon;
-use maiq_shared::{Group, Lesson, Uid};
+use maiq_shared::default::{DefaultGroup, DefaultLesson};
 
 pub trait GroupComponent {
-  fn new() -> Self;
   fn update_lesson(&mut self, idx: usize, message: LessonMessage);
   fn remove_lesson(&mut self, idx: usize);
 }
@@ -21,11 +20,7 @@ pub enum Message {
   Remove,
 }
 
-impl GroupComponent for Group {
-  fn new() -> Self {
-    Group { uid: "?".into(), ..Group::default() }
-  }
-
+impl GroupComponent for DefaultGroup {
   fn update_lesson(&mut self, idx: usize, message: LessonMessage) {
     if let Some(l) = self.lessons.get_mut(idx) {
       l.update(message);
@@ -37,14 +32,13 @@ impl GroupComponent for Group {
   }
 }
 
-impl Component for Group {
+impl Component for DefaultGroup {
   type Message = Message;
 
   fn update(&mut self, message: Message) {
-    self.uid = self.uid();
     match message {
       Message::EditName(name) => self.name = name,
-      Message::CreateLesson => self.lessons.push(Lesson::new(self.lessons.last())),
+      Message::CreateLesson => self.lessons.push(DefaultLesson::new(self.lessons.last())),
       Message::Lesson((idx, LessonMessage::Remove)) => self.remove_lesson(idx),
       Message::Lesson((idx, message)) => self.update_lesson(idx, message),
       _ => (),

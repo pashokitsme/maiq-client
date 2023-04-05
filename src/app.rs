@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use chrono::{Datelike, Days, Weekday};
+use chrono::{Datelike, Weekday};
 use iced::{
   widget::{column, container, row, scrollable, Rule},
   Length, Sandbox,
@@ -18,7 +18,6 @@ pub enum AppMessage {
   Import(usize),
   ImportToday,
   ImportNext,
-  ImportFromFile,
   Export,
   New,
   DeleteNotification(usize),
@@ -63,24 +62,19 @@ impl Sandbox for App {
         self.editor.update(m);
         Ok(None)
       }
-      AppMessage::Import(idx) => self.editor.set_groups(self.editor.load_from_default(&DEFAULTS[idx])),
-      AppMessage::ImportToday => self.editor.set_groups(
-        self
-          .editor
-          .load_from_default(&DEFAULTS[resolve_weekday(true).number_from_monday() as usize - 1]),
-      ),
-      AppMessage::ImportNext => self.editor.set_groups(
-        self
-          .editor
-          .load_from_default(&DEFAULTS[resolve_weekday(false).number_from_monday() as usize - 1]),
-      ),
+      AppMessage::Import(idx) => self.editor.set_groups(&DEFAULTS[idx]),
+      AppMessage::ImportToday => self
+        .editor
+        .set_groups(&DEFAULTS[resolve_weekday(true).number_from_monday() as usize - 1]),
+      AppMessage::ImportNext => self
+        .editor
+        .set_groups(&DEFAULTS[resolve_weekday(false).number_from_monday() as usize - 1]),
       AppMessage::Sort => self.editor.sort(),
       AppMessage::Export => self.editor.save_to_file(),
       AppMessage::DeleteNotification(idx) => {
         self.notifications.remove(idx);
         Ok(None)
-      }
-      AppMessage::New => self.editor.set_groups(vec![]),
+      },
       AppMessage::Nothing => Ok(None),
       _ => Err(anyhow!("Not yet implemented!")),
     };
